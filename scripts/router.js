@@ -5,7 +5,7 @@ export const router = {};
 /**
  * Changes the "page" (state) that your SPA app is currently set to
  */
-router.setState = function() {
+router.setState = function(selectedEntry,gottenEntry) {
   /**
    * - There are three states that your SPA app will have
    *    1. The home page
@@ -35,4 +35,72 @@ router.setState = function() {
    *    1. You may add as many helper functions in this file as you like
    *    2. You may modify the parameters of setState() as much as you like
    */
+  let entryPage = document.querySelector('entry-page');
+  let allEntries = document.querySelectorAll('journal-entry');
+  let bodyElement = document.querySelector('body');
+  let headerElement = document.querySelector('header');
+  let titleElement = headerElement.querySelector('h1');
+  let newEntryPage = document.createElement('entry-page');
+
+  console.log(selectedEntry.state);
+
+  if(selectedEntry.type === "popstate"){
+    if(selectedEntry.state === null){
+      titleElement.innerHTML = "Journal Entries";
+
+      if(bodyElement.classList.contains("single-entry")){
+        bodyElement.classList.remove("single-entry");
+        entryPage.remove();
+        bodyElement.append(newEntryPage);
+      }
+      else if(bodyElement.classList.contains("settings")){
+        bodyElement.classList.remove("settings");
+      }
+    }else if(selectedEntry.state.startsWith("Entry")){
+      
+      if(bodyElement.classList.contains("settings")){
+        bodyElement.classList.remove("settings");
+      }
+
+      titleElement.innerHTML = "Journal Entries";
+
+      if(entryPage.entry.content === ""){
+        console.log(parseInt(selectedEntry.state.slice(-1),10));
+        entryPage.entry = allEntries[parseInt(selectedEntry.state.slice(-1),10)].entry;
+      }
+
+      bodyElement.classList.add("single-entry");
+    }
+    else if(selectedEntry.state === "Settings"){
+      if(bodyElement.classList.contains("single-entry")){
+        bodyElement.classList.remove("single-entry");
+      }
+
+      titleElement.innerHTML = "Settings";
+      bodyElement.classList.add("settings");
+    }
+  }else{
+    if(selectedEntry.hasAttribute('src')){ //if settings was selected
+      
+      titleElement.innerHTML = "Settings"
+
+      if(bodyElement.classList.contains("single-entry")){
+        bodyElement.classList.remove("single-entry");
+        bodyElement.classList.add("settings");
+      }else{
+        bodyElement.classList.add("settings");
+      }
+    }else if(selectedEntry.tagName == "JOURNAL-ENTRY"){  //if single entry was selected
+      
+      entryPage.entry = selectedEntry.entry;
+      titleElement.innerHTML = "Journal Entries";
+      
+      if(bodyElement.classList.contains("settings")){
+        bodyElement.classList.remove("settings");
+        bodyElement.classList.add("single-entry");
+      }else{
+        bodyElement.classList.add("single-entry");
+      }
+    }
+  }
 }
