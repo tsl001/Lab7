@@ -59,7 +59,7 @@ event.respondWith(
             }
         );
     })
-    ).catch(err => caches.match(e.request).then(res => res));
+    );
 });
 
 self.addEventListener('activate', event => {
